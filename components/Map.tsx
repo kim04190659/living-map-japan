@@ -3,7 +3,7 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react';
 import L from 'leaflet';
-import type { City, CityLayer } from '@/app/page';
+import type { City, CityLayer } from '@/types/city';
 
 const layerColors: Record<CityLayer, string> = {
   '国家コア': '#1e3a8a',
