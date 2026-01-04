@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useEffect, useState } from 'react';
 
 // ================================
 // Types
@@ -28,7 +27,7 @@ interface Scenario {
 }
 
 // ================================
-// Design constants (B / I)
+// Design constants
 // ================================
 
 const layerColors: Record<CityLayer, string> = {
@@ -37,16 +36,10 @@ const layerColors: Record<CityLayer, string> = {
   '準拠点': '#4b5563'
 };
 
-const diffColor = '#dc2626'; // 赤（Afterで変化した都市）
-
-const layerLabels: Record<CityLayer, string> = {
-  '国家コア': '国家機能を集約する中枢都市',
-  '広域コア': '複数県を支える広域拠点',
-  '準拠点': '生活完結を保証する最低基盤'
-};
+const diffColor = '#dc2626';
 
 // ================================
-// Page (J-2 + I)
+// Page
 // ================================
 
 export default function Page() {
@@ -59,7 +52,6 @@ export default function Page() {
     '準拠点': true
   });
 
-  // J-2: JSON 読み込み
   useEffect(() => {
     fetch('/data/cities.json').then(r => r.json()).then(setCities);
     fetch('/data/scenario.json').then(r => r.json()).then(setScenarioData);
@@ -68,13 +60,9 @@ export default function Page() {
   const toggle = (layer: CityLayer) =>
     setFilters(prev => ({ ...prev, [layer]: !prev[layer] }));
 
-  // I: Before / After 差分適用
   const displayedCities = cities.map(city => {
     if (scenario === 'after' && scenarioData?.layerChanges[city.id]) {
-      return {
-        ...city,
-        layer: scenarioData.layerChanges[city.id]
-      };
+      return { ...city, layer: scenarioData.layerChanges[city.id] };
     }
     return city;
   });
@@ -90,48 +78,13 @@ export default function Page() {
 
   return (
     <main className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-2xl font-bold mb-2">未来のくらし設計図（Living Map Japan）</h1>
-      <p className="text-sm text-gray-600 mb-4">都市再編 Before / After 可視化</p>
-
-      {/* Legend */}
-      <div className="flex flex-wrap gap-4 mb-4 text-sm">
-        {(Object.keys(layerColors) as CityLayer[]).map(layer => (
-          <div key={layer} className="flex items-center gap-2">
-            <span
-              className="inline-block w-3 h-3 rounded-full"
-              style={{ backgroundColor: layerColors[layer] }}
-            />
-            <span>{layer}</span>
-          </div>
-        ))}
-        <div className="flex items-center gap-2">
-          <span
-            className="inline-block w-3 h-3 rounded-full"
-            style={{ backgroundColor: diffColor }}
-          />
-          <span>Afterで変化</span>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex gap-4 mb-4">
-        {(Object.keys(filters) as CityLayer[]).map(layer => (
-          <label key={layer} className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={filters[layer]}
-              onChange={() => toggle(layer)}
-            />
-            {layer}
-          </label>
-        ))}
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Living Map Japan</h1>
 
       <button
         className="mb-4 px-3 py-1 border rounded"
-        onClick={() => setScenario(s => s === 'before' ? 'after' : 'before')}
+        onClick={() => setScenario(s => (s === 'before' ? 'after' : 'before'))}
       >
-        シナリオ切替: {scenario === 'before' ? 'Before' : 'After'}
+        シナリオ切替: {scenario}
       </button>
 
       <Map cities={displayedCities} filters={filters} diffMap={diffMap} />
@@ -140,7 +93,7 @@ export default function Page() {
 }
 
 // ================================
-// Map Component (I 完成形)
+// Map Component（SSR安全版）
 // ================================
 
 function Map({
@@ -153,31 +106,42 @@ function Map({
   diffMap: Record<string, boolean>;
 }) {
   useEffect(() => {
-    const map = L.map('map').setView([36.2048, 138.2529], 5);
+    if (typeof window === 'undefined') return;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    let map: any;
+    let L: any;
 
-    cities
-      .filter(c => filters[c.layer])
-      .forEach(c => {
-        const isDiff = diffMap[c.id];
-        const marker = L.circleMarker([c.lat, c.lng], {
-          radius: isDiff ? 10 : 8,
-          color: isDiff ? diffColor : layerColors[c.layer],
-          fillColor: isDiff ? diffColor : layerColors[c.layer],
-          fillOpacity: 0.85
+    (async () => {
+      L = await import('leaflet');
+
+      map = L.map('map').setView([36.2048, 138.2529], 5);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      cities
+        .filter(c => filters[c.layer])
+        .forEach(c => {
+          const isDiff = diffMap[c.id];
+          L.circleMarker([c.lat, c.lng], {
+            radius: isDiff ? 10 : 8,
+            color: isDiff ? diffColor : layerColors[c.layer],
+            fillColor: isDiff ? diffColor : layerColors[c.layer],
+            fillOpacity: 0.85
+          })
+            .addTo(map)
+            .bindPopup(
+              `<strong>${c.name}</strong><br/>${c.primaryRole}<br/><small>${c.horizon}</small>`
+            );
         });
+    })();
 
-        marker
-          .addTo(map)
-          .bindPopup(
-            `<strong>${c.name}</strong><br/>${c.primaryRole}<br/><small>${c.horizon}</small>`
-          );
-      });
-
-    return () => map.remove();
+    return () => {
+      if (map) {
+        map.remove();
+      }
+    };
   }, [cities, filters, diffMap]);
 
   return <div id="map" style={{ height: '500px' }} />;

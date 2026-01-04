@@ -1,44 +1,55 @@
 "use client";
 
-import { useEffect } from "react";
-import L from "leaflet";
-import type { City, CityLayer } from "../app/page";
+import 'leaflet/dist/leaflet.css';
+import { useEffect } from 'react';
+import L from 'leaflet';
+import type { City, CityLayer } from '@/app/page';
+
+const layerColors: Record<CityLayer, string> = {
+  '国家コア': '#1e3a8a',
+  '広域コア': '#166534',
+  '準拠点': '#4b5563'
+};
+
+const diffColor = '#dc2626';
 
 export default function Map({
   cities,
   filters,
-  supportByLayer
+  diffMap
 }: {
   cities: City[];
   filters: Record<CityLayer, boolean>;
-  supportByLayer: Record<CityLayer, string[]>;
+  diffMap: Record<string, boolean>;
 }) {
   useEffect(() => {
-    const map = L.map("map").setView([36.2048, 138.2529], 5);
+    const map = L.map('map').setView([36.2048, 138.2529], 5);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors"
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
     cities
       .filter(c => filters[c.layer])
       .forEach(c => {
-        const supportHtml = supportByLayer[c.layer]
-          .map(s => `<li>${s}</li>`)
-          .join("");
-
-        L.marker([c.lat, c.lng])
+        const isDiff = diffMap[c.id];
+        L.circleMarker([c.lat, c.lng], {
+          radius: isDiff ? 10 : 8,
+          color: isDiff ? diffColor : layerColors[c.layer],
+          fillColor: isDiff ? diffColor : layerColors[c.layer],
+          fillOpacity: 0.85
+        })
           .addTo(map)
           .bindPopup(
-            `<strong>${c.name}</strong><br/>
-             ${c.primaryRole}<br/><br/>
-             <em>国の支援</em>
-             <ul>${supportHtml}</ul>`
+            `<strong>${c.name}</strong><br/>${c.primaryRole}<br/><small>${c.horizon}</small>`
           );
       });
 
-    return () => map.remove();
-  }, [cities, filters, supportByLayer]);
+    // ★ ここが重要：必ず void を返す
+    return () => {
+      map.remove();
+    };
+  }, [cities, filters, diffMap]);
 
-  return <div id="map" style={{ height: "500px" }} />;
+  return <div id="map" style={{ height: '500px' }} />;
 }
