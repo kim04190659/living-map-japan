@@ -1,0 +1,11 @@
+{
+  "id": "scenario-01",
+  "name": "1700自治体 → 200拠点 再編シナリオ",
+  "description": "人口減少下でも生活水準を維持するための集約設計",
+  "layerChanges": {
+    "yamagata": "広域コア"
+  },
+  "policyNotes": {
+    "yamagata": "医療・教育を集約し、周辺準拠点を吸収"
+  }
+}

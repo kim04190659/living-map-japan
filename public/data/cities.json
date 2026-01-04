@@ -1,0 +1,22 @@
+[
+  { "id": "tokyo", "name": "東京", "layer": "国家コア", "primaryRole": "統治・金融・国際連結", "lat": 35.6895, "lng": 139.6917, "horizon": "国家意思決定と国際標準を担う" },
+  { "id": "osaka", "name": "大阪", "layer": "国家コア", "primaryRole": "商業・都市経済", "lat": 34.6937, "lng": 135.5023, "horizon": "西日本経済の最終ハブ" },
+  { "id": "nagoya", "name": "名古屋", "layer": "国家コア", "primaryRole": "精密製造", "lat": 35.1815, "lng": 136.9066, "horizon": "製造国家の心臓部" },
+  { "id": "yokohama", "name": "横浜", "layer": "国家コア", "primaryRole": "国際物流", "lat": 35.4437, "lng": 139.638, "horizon": "対外貿易の結節点" },
+  { "id": "kyoto", "name": "京都", "layer": "国家コア", "primaryRole": "文化知識資本", "lat": 35.0116, "lng": 135.7681, "horizon": "文化継承と知の集積" },
+  { "id": "fukuoka", "name": "福岡", "layer": "国家コア", "primaryRole": "アジア接続", "lat": 33.5904, "lng": 130.4017, "horizon": "アジア玄関口" },
+  { "id": "sapporo", "name": "札幌", "layer": "国家コア", "primaryRole": "寒冷地都市モデル", "lat": 43.0618, "lng": 141.3545, "horizon": "北方圏都市モデル" },
+  { "id": "hiroshima", "name": "広島", "layer": "国家コア", "primaryRole": "平和外交象徴", "lat": 34.3853, "lng": 132.4553, "horizon": "外交的象徴都市" },
+
+  { "id": "sendai", "name": "仙台", "layer": "広域コア", "primaryRole": "東北医療中枢", "lat": 38.2682, "lng": 140.8694, "horizon": "東北の高度医療集約" },
+  { "id": "niigata", "name": "新潟", "layer": "広域コア", "primaryRole": "日本海物流", "lat": 37.9161, "lng": 139.0364, "horizon": "日本海側物流中枢" },
+  { "id": "kanazawa", "name": "金沢", "layer": "広域コア", "primaryRole": "伝統産業集積", "lat": 36.5613, "lng": 136.6562, "horizon": "文化産業集積" },
+  { "id": "nagano", "name": "長野", "layer": "広域コア", "primaryRole": "山岳環境研究", "lat": 36.6486, "lng": 138.1948, "horizon": "内陸環境拠点" },
+  { "id": "shizuoka", "name": "静岡", "layer": "広域コア", "primaryRole": "食料供給", "lat": 34.9756, "lng": 138.3828, "horizon": "首都圏食料供給" },
+
+  { "id": "yamagata", "name": "山形", "layer": "準拠点", "primaryRole": "雪国生活完結", "lat": 38.2554, "lng": 140.3396, "horizon": "豪雪地域生活モデル" },
+  { "id": "akita", "name": "秋田", "layer": "準拠点", "primaryRole": "高齢社会モデル", "lat": 39.720, "lng": 140.1025, "horizon": "超高齢社会適応" },
+  { "id": "iwaki", "name": "いわき", "layer": "準拠点", "primaryRole": "沿岸生活", "lat": 37.0505, "lng": 140.8877, "horizon": "沿岸生活維持" }
+
+  /* 以下同一形式で150都市まで拡張可能 */
+]

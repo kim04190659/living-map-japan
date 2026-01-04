@@ -1,0 +1,26 @@
+[
+  { "id": "tokyo", "name": "東京", "layer": "国家コア", "primaryRole": "統治・金融・国際連結", "lat": 35.6895, "lng": 139.6917, "horizon": "国家意思決定と国際標準" },
+  { "id": "osaka", "name": "大阪", "layer": "国家コア", "primaryRole": "商業・西日本統括", "lat": 34.6937, "lng": 135.5023, "horizon": "関西経済中枢" },
+  { "id": "nagoya", "name": "名古屋", "layer": "国家コア", "primaryRole": "精密製造", "lat": 35.1815, "lng": 136.9066, "horizon": "製造業の心臓部" },
+  { "id": "yokohama", "name": "横浜", "layer": "国家コア", "primaryRole": "国際港湾", "lat": 35.4437, "lng": 139.6380, "horizon": "海運と国際物流" },
+  { "id": "fukuoka", "name": "福岡", "layer": "国家コア", "primaryRole": "アジア連結", "lat": 33.5902, "lng": 130.4017, "horizon": "アジアの玄関口" },
+  { "id": "sapporo", "name": "札幌", "layer": "国家コア", "primaryRole": "寒冷地統括", "lat": 43.0618, "lng": 141.3545, "horizon": "北方圏拠点" },
+  { "id": "kobe", "name": "神戸", "layer": "国家コア", "primaryRole": "国際物流", "lat": 34.6901, "lng": 135.1955, "horizon": "高付加価値港湾" },
+
+  { "id": "sendai", "name": "仙台", "layer": "広域コア", "primaryRole": "東北医療", "lat": 38.2682, "lng": 140.8694, "horizon": "東北の医療・教育" },
+  { "id": "niigata", "name": "新潟", "layer": "広域コア", "primaryRole": "日本海物流", "lat": 37.9161, "lng": 139.0364, "horizon": "日本海側拠点" },
+  { "id": "kanazawa", "name": "金沢", "layer": "広域コア", "primaryRole": "文化観光", "lat": 36.5613, "lng": 136.6562, "horizon": "北陸統括" },
+  { "id": "hiroshima", "name": "広島", "layer": "広域コア", "primaryRole": "中国地方中枢", "lat": 34.3853, "lng": 132.4553, "horizon": "平和・産業" },
+  { "id": "okayama", "name": "岡山", "layer": "広域コア", "primaryRole": "高度医療", "lat": 34.6551, "lng": 133.9195, "horizon": "中四国医療" },
+  { "id": "matsuyama", "name": "松山", "layer": "広域コア", "primaryRole": "四国行政", "lat": 33.8392, "lng": 132.7657, "horizon": "四国統括" },
+  { "id": "kagoshima", "name": "鹿児島", "layer": "広域コア", "primaryRole": "南九州統括", "lat": 31.5966, "lng": 130.5571, "horizon": "南西防災" },
+  { "id": "kumamoto", "name": "熊本", "layer": "広域コア", "primaryRole": "半導体", "lat": 32.8031, "lng": 130.7079, "horizon": "先端製造" },
+  { "id": "morioka", "name": "盛岡", "layer": "広域コア", "primaryRole": "北東北行政", "lat": 39.7016, "lng": 141.1544, "horizon": "寒冷地行政" },
+
+  { "id": "yamagata", "name": "山形", "layer": "準拠点", "primaryRole": "生活完結", "lat": 38.2554, "lng": 140.3396, "horizon": "安心居住" },
+  { "id": "akita", "name": "秋田", "layer": "準拠点", "primaryRole": "農業", "lat": 39.7186, "lng": 140.1024, "horizon": "食料供給" },
+  { "id": "aomori", "name": "青森", "layer": "準拠点", "primaryRole": "漁業", "lat": 40.8222, "lng": 140.7474, "horizon": "一次産業" },
+  { "id": "tottori", "name": "鳥取", "layer": "準拠点", "primaryRole": "生活基盤", "lat": 35.5011, "lng": 134.2351, "horizon": "静かな定住" },
+  { "id": "shimane", "name": "松江", "layer": "準拠点", "primaryRole": "行政支援", "lat": 35.4681, "lng": 133.0484, "horizon": "地域維持" }
+
+]

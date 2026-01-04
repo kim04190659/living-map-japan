@@ -1,65 +1,184 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// ================================
+// Types
+// ================================
+
+export type CityLayer = '国家コア' | '広域コア' | '準拠点';
+
+export interface City {
+  id: string;
+  name: string;
+  layer: CityLayer;
+  primaryRole: string;
+  lat: number;
+  lng: number;
+  horizon: string;
+}
+
+interface Scenario {
+  id: string;
+  name: string;
+  description: string;
+  layerChanges: Record<string, CityLayer>;
+}
+
+// ================================
+// Design constants (B / I)
+// ================================
+
+const layerColors: Record<CityLayer, string> = {
+  '国家コア': '#1e3a8a',
+  '広域コア': '#166534',
+  '準拠点': '#4b5563'
+};
+
+const diffColor = '#dc2626'; // 赤（Afterで変化した都市）
+
+const layerLabels: Record<CityLayer, string> = {
+  '国家コア': '国家機能を集約する中枢都市',
+  '広域コア': '複数県を支える広域拠点',
+  '準拠点': '生活完結を保証する最低基盤'
+};
+
+// ================================
+// Page (J-2 + I)
+// ================================
+
+export default function Page() {
+  const [cities, setCities] = useState<City[]>([]);
+  const [scenario, setScenario] = useState<'before' | 'after'>('before');
+  const [scenarioData, setScenarioData] = useState<Scenario | null>(null);
+  const [filters, setFilters] = useState<Record<CityLayer, boolean>>({
+    '国家コア': true,
+    '広域コア': true,
+    '準拠点': true
+  });
+
+  // J-2: JSON 読み込み
+  useEffect(() => {
+    fetch('/data/cities.json').then(r => r.json()).then(setCities);
+    fetch('/data/scenario.json').then(r => r.json()).then(setScenarioData);
+  }, []);
+
+  const toggle = (layer: CityLayer) =>
+    setFilters(prev => ({ ...prev, [layer]: !prev[layer] }));
+
+  // I: Before / After 差分適用
+  const displayedCities = cities.map(city => {
+    if (scenario === 'after' && scenarioData?.layerChanges[city.id]) {
+      return {
+        ...city,
+        layer: scenarioData.layerChanges[city.id]
+      };
+    }
+    return city;
+  });
+
+  const diffMap: Record<string, boolean> = {};
+  if (scenario === 'after' && scenarioData) {
+    cities.forEach(c => {
+      if (scenarioData.layerChanges[c.id] && scenarioData.layerChanges[c.id] !== c.layer) {
+        diffMap[c.id] = true;
+      }
+    });
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main className="min-h-screen p-6 bg-gray-50">
+      <h1 className="text-2xl font-bold mb-2">未来のくらし設計図（Living Map Japan）</h1>
+      <p className="text-sm text-gray-600 mb-4">都市再編 Before / After 可視化</p>
+
+      {/* Legend */}
+      <div className="flex flex-wrap gap-4 mb-4 text-sm">
+        {(Object.keys(layerColors) as CityLayer[]).map(layer => (
+          <div key={layer} className="flex items-center gap-2">
+            <span
+              className="inline-block w-3 h-3 rounded-full"
+              style={{ backgroundColor: layerColors[layer] }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <span>{layer}</span>
+          </div>
+        ))}
+        <div className="flex items-center gap-2">
+          <span
+            className="inline-block w-3 h-3 rounded-full"
+            style={{ backgroundColor: diffColor }}
+          />
+          <span>Afterで変化</span>
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-4 mb-4">
+        {(Object.keys(filters) as CityLayer[]).map(layer => (
+          <label key={layer} className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={filters[layer]}
+              onChange={() => toggle(layer)}
+            />
+            {layer}
+          </label>
+        ))}
+      </div>
+
+      <button
+        className="mb-4 px-3 py-1 border rounded"
+        onClick={() => setScenario(s => s === 'before' ? 'after' : 'before')}
+      >
+        シナリオ切替: {scenario === 'before' ? 'Before' : 'After'}
+      </button>
+
+      <Map cities={displayedCities} filters={filters} diffMap={diffMap} />
+    </main>
   );
+}
+
+// ================================
+// Map Component (I 完成形)
+// ================================
+
+function Map({
+  cities,
+  filters,
+  diffMap
+}: {
+  cities: City[];
+  filters: Record<CityLayer, boolean>;
+  diffMap: Record<string, boolean>;
+}) {
+  useEffect(() => {
+    const map = L.map('map').setView([36.2048, 138.2529], 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    cities
+      .filter(c => filters[c.layer])
+      .forEach(c => {
+        const isDiff = diffMap[c.id];
+        const marker = L.circleMarker([c.lat, c.lng], {
+          radius: isDiff ? 10 : 8,
+          color: isDiff ? diffColor : layerColors[c.layer],
+          fillColor: isDiff ? diffColor : layerColors[c.layer],
+          fillOpacity: 0.85
+        });
+
+        marker
+          .addTo(map)
+          .bindPopup(
+            `<strong>${c.name}</strong><br/>${c.primaryRole}<br/><small>${c.horizon}</small>`
+          );
+      });
+
+    return () => map.remove();
+  }, [cities, filters, diffMap]);
+
+  return <div id="map" style={{ height: '500px' }} />;
 }
